@@ -1,70 +1,100 @@
-# Exercise 1: Build A Simple Library System
 class Book:
+    '''The Book class represents individual books with attributes such as title, author, and availability status.'''
     def __init__(self, title, author):
         self.title = title
         self.author = author
-        self.book_available = True
+        self.availability_status = True
 
-    def is_book_available(self):
-        return "is available" if self.book_available else "is not available"
-    
     def __str__(self):
-        return f"The book {self.title} by {self.author} {self.is_book_available()}"
+        return f"Book Title: {self.title}; Author: {self.author}; Availability = {self.availability_status}"
+        
 
 class Member:
-    def __init__(self, member_name, member_ID):
-        self.member_name = member_name
+    '''The Member class models library members with attributes like name, member ID, and a list of borrowed books.'''
+    def __init__(self, name, member_ID):
+        self.name = name
         self.member_ID = member_ID
         self.borrowed_books = []
 
-    def books_borrowed(self):
-        [print(book) for book in self.books_borrowed]
-
-
+    def borrow_book(self, book):
+        if book.availability_status:
+            self.borrowed_books.append(book)
+            book.availability_status = False
+        else:
+            print(f"{book.title} is not available.")
+    
+    def return_book(self, book):
+        if book in self.borrowed_books:
+            self.borrowed_books.remove(book)
+            book.availability_status = True
+        else:
+            print(f"{book.title} is not borrowed by {self.name}.")
+        
     def __str__(self):
-        return f"Member Name: {self.name}\n Member ID Number:{self.member_ID}\n Borrowed Books: {self.books_borrowed()}"
+        borrowed_book_titles = [book.title for book in self.borrowed_books]
+        return f"Member Name: {self.name}; Member ID: {self.member_ID}; Books Borrowed: {borrowed_book_titles}"
 
 class Library:
-    
+    '''The Library class manages the library's collection of books and members.'''
     def __init__(self):
-        self.new_book = []
-        self.new_member = []
+        self.books = []
+        self.members = []
 
     def add_book(self, book):
-        self.new_book.append(book)
+        self.books.append(book)
 
     def register_member(self, member):
-        self.new_member.append(member)
-
-    def lend_book(self, member, book):
-        if book.book_available:
-            member.books_borrowed.append(book)
-            book.book_available = False
-            print(f"You have successfully borrowed {book}")
-        else:
-            print(f"{book} is unavailable")
-
-    def return_book(self, member, book):
-        member.books_borrowed.remove(book)
-        return member.books_borrowed()
-
-
-
+        self.members.append(member)
         
+    def print_books(self):
+        for book in self.books:
+            print(book)
 
-book1 = Book("Behave","Robert Sapolsky")
+    def print_members(self):
+        for member in self.members:
+            print(member)
+
+# Create book instances 
+book1 = Book("Behave", "Robert Sapolsky")
 book2 = Book("1984", "George Orwell") 
 book3 = Book("To Kill a Mockingbird", "Harper Lee")
-book4 = Book("The Essential Kafka", 'Franz Kafka')
-book5 = Book("The Elegant Universe", "Bian Greene")
+book4 = Book("The Essential Kafka", "Franz Kafka")
+book5 = Book("The Elegant Universe", "Brian Greene")
 
-member1 = Member('Alex', 1234)
+# Create member instances 
+member1 = Member("Alex", 1234)
 member2 = Member("Alice", 3001)
-member3 = Member('Amber', 9678)
 
-registration = Library()
-registration.register_member(member1)
-am_I_a_member = Member()
-am_I_a_member(member1)
+# Library instance
+library = Library()
 
+# Add books to library
+library.add_book(book1)
+library.add_book(book2)
+library.add_book(book3)
+library.add_book(book4)
+library.add_book(book5)
 
+# Register members
+library.register_member(member1)
+library.register_member(member2)
+
+# Member one borrows a book
+member1.borrow_book(book1)
+# Member two tries to borrow the same book and finds it's unavailable
+member2.borrow_book(book1)
+member2.borrow_book(book4)
+member2.borrow_book(book2)
+
+# Print members and their borrowed books
+print(member1)
+print(member2)
+
+# Member one returns the book
+member1.return_book(book1)
+
+# Print library books and members
+print("\nLibrary Books:")
+library.print_books()
+print("\nLibrary Members:")
+library.print_members()
